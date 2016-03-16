@@ -88,8 +88,6 @@
 
 (defmethod read :default
   [{:keys [state query]} key params]
-  (println query)
-  (println key)
   (let [st @state]
     (if (get st key)
       {:value (om/db->tree query (get st key) st)}
@@ -143,3 +141,12 @@
   {:background-color "#e04696" :color "#9c2c4b"}])
 
 (def legend (mapv make-tile colors))
+
+;; REPL helpers
+(comment
+  ; inspect the state when normalized
+  (def normalized-state (atom (om/tree->db TilesApp initial-state true)))
+
+  ; query the state
+  (parser {:state normalized-state} [:boards {:tiles/legend [:width]}])
+)
