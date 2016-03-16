@@ -186,3 +186,141 @@ Compiling src/tiles/core.cljs
 [31mCompiling "resources/public/js/main.js" failed.
 [0mANALYSIS ERROR: No such namespace: om.dom, could not locate om/dom.cljs, om/dom.cljc, or Closure namespace "om.dom" on file null, line null, column null
 [32mSuccessfully compiled "resources/public/js/main.js" in 0.12 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  resources/public/js/goog/deps.js
+notifying browser that file changed:  resources/public/js/cljs_deps.js
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.577 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.217 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+[31mCompiling "resources/public/js/main.js" failed.
+[0mERROR: Map literal must contain an even number of forms on file /Users/haywood/trash/tiles/src/tiles/core.cljs, line 43, column 59
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.157 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+[31mCompiling "resources/public/js/main.js" failed.
+[0mERROR: Map literal must contain an even number of forms on file /Users/haywood/trash/tiles/src/tiles/core.cljs, line 43, column 59
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.129 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.345 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.341 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.298 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.255 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.229 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+WARNING: Wrong number of args (1) passed to tiles.core/Legend at line 67 src/tiles/core.cljs
+WARNING: legend at line 57 is being replaced at line 135 src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.374 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+WARNING: legend at line 57 is being replaced at line 135 src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.452 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+WARNING: legend at line 58 is being replaced at line 136 src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.31 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.27 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.292 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.196 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+WARNING: legend at line 58 is being replaced at line 136 src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.407 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.23 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.226 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.237 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.275 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.273 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.219 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.406 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.22 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+[31mCompiling "resources/public/js/main.js" failed.
+[0mANALYSIS ERROR: nth not supported on this type: Symbol at line 52 src/tiles/core.cljs on file src/tiles/core.cljs, line 52, column 3
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.124 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.252 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.267 seconds.[0m

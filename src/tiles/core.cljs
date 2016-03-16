@@ -31,18 +31,26 @@
 ;; -----------------------------------------------------------------
 
 
+(defn make-tile-ref-str [props]
+  (let [tile-color (:backgroundColor props)
+        dot-color (get-in props [:dot :backgroundColor])]
+    (str tile-color "/" dot-color)))
+
 (defui Tile
   static om/Ident
   (ident [_ props]
-    (let [tile-color (:backgroundColor props)
-          dot-color (get-in props [:dot :backgroundColor])
-          ref-str (str tile-color "/" dot-color)]
-      [:tile/by-colors ref-str]))
+    [:tile/by-colors (make-tile-ref-str props)])
   static om/IQuery
   (query [this]
-    [:width :height :backgroundColor])
+    [:width :height :backgroundColor
+     {:dot [:width :height :backgroundColor]}])
   Object
-  (render [this]))
+  (render [this]
+    (let [p (om/props this)]
+      (dom/div #js{:style #js{:width           (:width p) :height (:height p)
+                              :backgroundColor (:backgroundColor p)}}))))
+
+(def tile-component (om/factory Tile {:key-fn make-tile-ref-str}))
 
 (defui Legend
   static om/IQuery
@@ -50,7 +58,13 @@
     {:tiles/legend (om/get-query Tile)})
 
   Object
-  (render [this]))
+  (render [this]
+    (let [{:keys [tiles/legend]} (om/props this)]
+      (dom/div nil
+        (apply dom/div nil
+          (map tile-component legend))))))
+
+(def legend-component (om/factory Legend))
 
 (defui TilesApp
   static om/IQuery
@@ -59,7 +73,8 @@
 
   Object
   (render [this]
-    (dom/div nil "tiles")))
+    (let [{:keys [tiles/legend]} (om/props this)]
+      (legend-component {:tiles/legend legend}))))
 
 
 ;; -----------------------------------------------------------------
@@ -72,8 +87,13 @@
 (defmulti read om/dispatch)
 
 (defmethod read :default
-  [env key params]
-  {:value {}})
+  [{:keys [state query]} key params]
+  (println query)
+  (println key)
+  (let [st @state]
+    (if (get st key)
+      {:value (om/db->tree query (get st key) st)}
+      {:remote true})))
 
 (defmulti mutate om/dispatch)
 
