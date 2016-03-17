@@ -1,12 +1,10 @@
 (ns tiles.core
   (:require [goog.dom :as gdom]
             [om.next :as om :refer-macros [defui]]
-            [cljs.pprint :as ppp]
             [om.dom :as dom]))
 
 (enable-console-print!)
 
-(def pp ppp/pprint)
 (declare legend)
 
 
@@ -20,6 +18,7 @@
 (def initial-state
   {:tiles/index []
    :tiles/legend legend
+   :selected-tile nil
    :boards []
    :current-board {}})
 
@@ -46,11 +45,13 @@
      {:dot [:width :height :backgroundColor]}])
   Object
   (render [this]
-    (let [p (om/props this)]
-      (dom/div #js{:style #js{:width           (:width p) :height (:height p)
-                              :backgroundColor (:backgroundColor p)}}))))
+    (let [p (om/props this)
+          clickAction (om/get-computed this :clickAction)]
+      (dom/div #js{:style #js{:width (:width p) :height (:height p)
+                              :backgroundColor (:backgroundColor p)}
+                   :onClick #(om/transact! this `[(~clickAction) :selected-tile])}))))
 
-(def tile-component (om/factory Tile {:key-fn make-tile-ref-str}))
+(def tile-component (om/factory Tile))
 
 (defui Legend
   static om/IQuery
@@ -60,21 +61,25 @@
   Object
   (render [this]
     (let [{:keys [tiles/legend]} (om/props this)]
-      (dom/div nil
-        (apply dom/div nil
-          (map tile-component legend))))))
+      (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap"
+                                      :width 75}}
+             (map #(tile-component (om/computed % {:clickAction 'select-legend-tile}))
+                  legend)))))
 
 (def legend-component (om/factory Legend))
 
 (defui TilesApp
   static om/IQuery
   (query [this]
-    [(om/get-query Legend)])
+    [{:selected-tile (om/get-query Tile)}
+     (om/get-query Legend)])
 
   Object
   (render [this]
-    (let [{:keys [tiles/legend]} (om/props this)]
-      (legend-component {:tiles/legend legend}))))
+    (let [{:keys [tiles/legend selected-tile]} (om/props this)]
+      (dom/div nil
+        (tile-component selected-tile)
+        (legend-component {:tiles/legend legend})))))
 
 
 ;; -----------------------------------------------------------------
@@ -86,21 +91,30 @@
 
 (defmulti read om/dispatch)
 
+(defmethod read :selected-tile
+  [{:keys [state query]} key params]
+  (let [st @state]
+    (if-let [val (get st key)]
+      {:value (get-in st val)}
+      {:value nil})))
+
 (defmethod read :default
   [{:keys [state query]} key params]
   (let [st @state]
     (if (get st key)
       {:value (om/db->tree query (get st key) st)}
-      {:remote true})))
+      {:value nil})))
 
 (defmulti mutate om/dispatch)
+
+(defmethod mutate 'select-legend-tile
+  [{:keys [state ref]} key params]
+  {:action #(swap! state assoc :selected-tile ref)})
 
 (def parser (om/parser {:read read :mutate mutate}))
 
 (def reconciler (om/reconciler {:state initial-state
                                 :parser parser}))
-
-(om/add-root! reconciler TilesApp (gdom/getElement "app"))
 
 
 ;; -----------------------------------------------------------------
@@ -150,3 +164,5 @@
   ; query the state
   (parser {:state normalized-state} [:boards {:tiles/legend [:width]}])
 )
+
+(om/add-root! reconciler TilesApp (gdom/getElement "app"))
