@@ -1,5 +1,6 @@
 /target
 .idea
 /resources/public/js
-.figwheel_server.log
-prose.iml
+figwheel_server.log
+tiles.iml
+.nrepl_port

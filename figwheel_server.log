@@ -649,3 +649,113 @@ Compiling /Users/haywood/trash/tiles/src/tiles/core.cljs
 Compiling target/figwheel_temp/dev/figwheel/connect.cljs
 notifying browser that file changed:  out/tiles/core.js
 [32mSuccessfully compiled "resources/public/js/main.js" in 0.218 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  resources/public/js/goog/deps.js
+notifying browser that file changed:  resources/public/js/cljs_deps.js
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.926 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.666 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.682 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.401 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.482 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.457 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.394 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.349 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.5 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.273 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.259 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.287 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.343 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.662 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.519 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/? at line 49 src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/? at line 50 src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/? at line 49 src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/? at line 50 src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.344 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/?tile at line 49 src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/?tile at line 50 src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/?tile at line 49 src/tiles/core.cljs
+WARNING: Use of undeclared Var tiles.core/?tile at line 50 src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.352 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.243 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.306 seconds.[0m
+[0mCompiling "resources/public/js/main.js" from ["src"]...
+Compiling src/tiles/core.cljs
+Compiling target/figwheel_temp/dev/figwheel/connect.cljs
+notifying browser that file changed:  out/tiles/core.js
+[32mSuccessfully compiled "resources/public/js/main.js" in 0.279 seconds.[0m

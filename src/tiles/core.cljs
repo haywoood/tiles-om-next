@@ -5,31 +5,6 @@
 
 (enable-console-print!)
 
-(declare legend)
-
-
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-;; State
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-
-
-(def initial-state
-  {:tiles/index []
-   :tiles/legend legend
-   :selected-tile nil
-   :boards []
-   :current-board {}})
-
-
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-;; Components
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-
-
 (defn make-tile-ref-str [props]
   (let [tile-color (:backgroundColor props)
         dot-color (get-in props [:dot :backgroundColor])]
@@ -46,83 +21,40 @@
   Object
   (render [this]
     (let [p (om/props this)
+          ident (om/ident this p)
           clickAction (om/get-computed this :clickAction)]
       (dom/div #js{:style #js{:width (:width p) :height (:height p)
                               :backgroundColor (:backgroundColor p)}
-                   :onClick #(om/transact! this `[(~clickAction) :selected-tile])}))))
+                   :onClick #(om/transact! this `[(~clickAction) :tiles/selected ~ident])}))))
 
-(def tile-component (om/factory Tile))
+(def tile-component (om/factory Tile {:key-fn make-tile-ref-str}))
 
 (defui Legend
-  static om/IQuery
-  (query [this]
-    {:tiles/legend (om/get-query Tile)})
-
   Object
   (render [this]
     (let [{:keys [tiles/legend]} (om/props this)]
       (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap"
                                       :width 75}}
-             (map #(tile-component (om/computed % {:clickAction 'select-legend-tile}))
+             (map #(tile-component (om/computed % {:clickAction 'legend/select-tile}))
                   legend)))))
 
 (def legend-component (om/factory Legend))
 
 (defui TilesApp
+  static om/IQueryParams
+  (params [_]
+    {:tile (om/get-query Tile)})
   static om/IQuery
   (query [this]
-    [{:selected-tile (om/get-query Tile)}
-     (om/get-query Legend)])
+    '[{:tiles/selected ?tile}
+      {:tiles/legend ?tile}])
 
   Object
   (render [this]
-    (let [{:keys [tiles/legend selected-tile]} (om/props this)]
+    (let [{:keys [tiles/legend tiles/selected]} (om/props this)]
       (dom/div nil
-        (tile-component selected-tile)
+        (tile-component selected)
         (legend-component {:tiles/legend legend})))))
-
-
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-;; Reconciler
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-
-
-(defmulti read om/dispatch)
-
-(defmethod read :selected-tile
-  [{:keys [state query]} key params]
-  (let [st @state]
-    (if-let [val (get st key)]
-      {:value (get-in st val)}
-      {:value nil})))
-
-(defmethod read :default
-  [{:keys [state query]} key params]
-  (let [st @state]
-    (if (get st key)
-      {:value (om/db->tree query (get st key) st)}
-      {:value nil})))
-
-(defmulti mutate om/dispatch)
-
-(defmethod mutate 'select-legend-tile
-  [{:keys [state ref]} key params]
-  {:action #(swap! state assoc :selected-tile ref)})
-
-(def parser (om/parser {:read read :mutate mutate}))
-
-(def reconciler (om/reconciler {:state initial-state
-                                :parser parser}))
-
-
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-;; Helpers
-;; -----------------------------------------------------------------
-;; -----------------------------------------------------------------
-
 
 (defn make-tile [{:keys [background-color color] :as params}]
   {:width 10
@@ -135,34 +67,47 @@
          :backgroundColor color}})
 
 (def colors [
-  {:background-color "#444" :color "white"}
-  {:background-color "blue" :color "white"}
-  {:background-color "cyan" :color "blue"}
-  {:background-color "red" :color "white"}
-  {:background-color "pink" :color "white"}
-  {:background-color "yellow" :color "red"}
-  {:background-color "#64c7cc" :color "cyan"}
-  {:background-color "#00a64d" :color "#75f0c3"}
-  {:background-color "#f5008b" :color "#ffdbbf"}
-  {:background-color "#0469bd" :color "#75d2fa"}
-  {:background-color "#fcf000" :color "#d60000"}
-  {:background-color "#010103" :color "#fa8e66"}
-  {:background-color "#7a2c02" :color "#fff3e6"}
-  {:background-color "white" :color "red"}
-  {:background-color "#f5989c" :color "#963e03"}
-  {:background-color "#ed1c23" :color "#fff780"}
-  {:background-color "#f7f7f7" :color "#009e4c"}
-  {:background-color "#e04696" :color "#9c2c4b"}])
+             {:background-color "#444" :color "white"}
+             {:background-color "blue" :color "white"}
+             {:background-color "cyan" :color "blue"}
+             {:background-color "red" :color "white"}
+             {:background-color "pink" :color "white"}
+             {:background-color "yellow" :color "red"}
+             {:background-color "#64c7cc" :color "cyan"}
+             {:background-color "#00a64d" :color "#75f0c3"}
+             {:background-color "#f5008b" :color "#ffdbbf"}
+             {:background-color "#0469bd" :color "#75d2fa"}
+             {:background-color "#fcf000" :color "#d60000"}
+             {:background-color "#010103" :color "#fa8e66"}
+             {:background-color "#7a2c02" :color "#fff3e6"}
+             {:background-color "white" :color "red"}
+             {:background-color "#f5989c" :color "#963e03"}
+             {:background-color "#ed1c23" :color "#fff780"}
+             {:background-color "#f7f7f7" :color "#009e4c"}
+             {:background-color "#e04696" :color "#9c2c4b"}])
 
 (def legend (mapv make-tile colors))
 
-;; REPL helpers
-(comment
-  ; inspect the state when normalized
-  (def normalized-state (atom (om/tree->db TilesApp initial-state true)))
+(def initial-state
+  {:tiles/legend legend
+   :tiles/selected nil})
 
-  ; query the state
-  (parser {:state normalized-state} [:boards {:tiles/legend [:width]}])
-)
+(defmulti read om/dispatch)
+
+(defmethod read :default
+  [{:keys [state query]} key]
+  (let [st @state]
+    {:value (om/db->tree query (get st key) st)}))
+
+(defmulti mutate om/dispatch)
+
+(defmethod mutate 'legend/select-tile
+  [{:keys [state ref]} _ _]
+  {:action (swap! state assoc :tiles/selected ref)})
+
+(def parser (om/parser {:read read :mutate mutate}))
+
+(def reconciler (om/reconciler {:state initial-state
+                                :parser parser}))
 
 (om/add-root! reconciler TilesApp (gdom/getElement "app"))
