@@ -3,4 +3,5 @@
 /resources/public/js
 figwheel_server.log
 tiles.iml
-.nrepl_port
+.nrepl-port
+.DS_Store
