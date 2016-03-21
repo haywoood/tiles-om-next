@@ -21,11 +21,10 @@
   Object
   (render [this]
     (let [p (om/props this)
-          ident (om/ident this p)
           clickAction (om/get-computed this :clickAction)]
       (dom/div #js{:style #js{:width (:width p) :height (:height p)
                               :backgroundColor (:backgroundColor p)}
-                   :onClick #(om/transact! this `[(~clickAction) :tiles/selected ~ident])}))))
+                   :onClick #(om/transact! this `[(~clickAction) :tiles/selected])}))))
 
 (def tile-component (om/factory Tile {:key-fn make-tile-ref-str}))
 
@@ -40,21 +39,37 @@
 
 (def legend-component (om/factory Legend))
 
+(defui TilesRow
+  static om/Ident
+  (ident [this {:keys [id]}]
+    [:row/by-id id])
+  static om/IQuery
+  (query [this]
+    [:id {:tile (om/get-query Tile)}])
+  Object
+  (render [this]
+    (let [{:keys [id tile]} (om/props this)]
+      (tile-component tile))))
+
+(def tiles-row (om/factory TilesRow {:key-fn :id}))
+
 (defui TilesApp
   static om/IQueryParams
   (params [_]
     {:tile (om/get-query Tile)})
   static om/IQuery
   (query [this]
-    '[{:tiles/selected ?tile}
-      {:tiles/legend ?tile}])
+    `[{:tiles/selected ~(om/get-query Tile)}
+      {:tiles/grid [{:tiles/row-one ~(om/get-query TilesRow)}]}
+      {:tiles/legend ~(om/get-query Tile)}])
 
   Object
   (render [this]
-    (let [{:keys [tiles/legend tiles/selected]} (om/props this)]
+    (let [{:keys [tiles/legend tiles/selected tiles/grid]} (om/props this)]
       (dom/div nil
         (tile-component selected)
-        (legend-component {:tiles/legend legend})))))
+        (legend-component {:tiles/legend legend})
+        (mapv tiles-row (:tiles/row-one grid))))))
 
 (defn make-tile [{:keys [background-color color] :as params}]
   {:width 10
@@ -88,8 +103,16 @@
 
 (def legend (mapv make-tile colors))
 
+(def blank-tile (make-tile {:color "red" :background-color "white"}))
+
 (def initial-state
-  {:tiles/legend legend
+  {:tiles/legend   (conj legend blank-tile)
+   :tiles/grid     {:tiles/row-one [{:id 0 :tile blank-tile}
+                                    {:id 1 :tile blank-tile}
+                                    {:id 2 :tile blank-tile}
+                                    {:id 3 :tile blank-tile}
+                                    {:id 4 :tile blank-tile}
+                                    {:id 5 :tile blank-tile}]}
    :tiles/selected nil})
 
 (defmulti read om/dispatch)
