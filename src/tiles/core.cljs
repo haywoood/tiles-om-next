@@ -11,6 +11,11 @@
         dot-color (get-in props [:dot :backgroundColor])]
     (str tile-color "/" dot-color)))
 
+(defn logo []
+  (dom/div #js {:style #js {:position "absolute" :bottom 25 :left "48%" :fontSize 16 :letterSpacing 1.5
+                            :fontFamily "sans-serif" :color "blak"}}
+           "tiles"))
+
 (defui Tile
   static om/Ident
   (ident [_ props]
@@ -42,8 +47,7 @@
 
   (render [this]
     (let [{:keys [tiles/legend]} (om/props this)]
-      (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap"
-                                      :width 75}}
+      (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap" :width 180 :marginTop 35 :marginLeft 10}}
              (map #(tile-component (om/computed % {:clickAction (fn [x]
                                                                   (.handle-click this x))}))
                   legend)))))
@@ -62,63 +66,62 @@
   (query [this]
     [:id {:tiles (om/get-query Tile)}])
   Object
-  (handle-click [this x]
-    (let [tile-ref (om/get-ident x)
-          row-ref (om/get-ident this)]
-      (om/transact! this `[(row/select-tile) ~row-ref])))
+  (handle-click [this index]
+    (let [row-ref (om/get-ident this)]
+      (om/transact! this `[(row/select-tile {:index ~index}) ~row-ref])))
   (render [this]
     (let [{:keys [tiles]} (om/props this)]
       (apply dom/div #js {:style #js {:display "flex"}}
-        (mapv #(tile-component (om/computed % {:clickAction (fn [x] (.handle-click this x))}))
-              tiles)))))
+        (mapv (fn [tile n] (tile-component (om/computed tile {:clickAction #(.handle-click this n)})))
+              tiles (range))))))
 
 (def tiles-row (om/factory TilesRow {:key-fn :id}))
 
 (defui TilesApp
   static om/IQueryParams
   (params [_]
-    {:tile (om/get-query Tile)})
+    {:tile (om/get-query Tile)
+     :tile-row (om/get-query TilesRow)})
   static om/IQuery
-  (query [this]
-    `[{:tiles/selected ~(om/get-query Tile)}
-      {:tiles/grid [{:tiles/row-one ~(om/get-query TilesRow)}
-                    {:tiles/row-two ~(om/get-query TilesRow)}
-                    {:tiles/row-three ~(om/get-query TilesRow)}
-                    {:tiles/row-four ~(om/get-query TilesRow)}
-                    {:tiles/row-five ~(om/get-query TilesRow)}
-                    {:tiles/row-six ~(om/get-query TilesRow)}
-                    {:tiles/row-seven ~(om/get-query TilesRow)}]}
-      {:tiles/legend ~(om/get-query Tile)}])
+  (query [_]
+    '[{:tiles/legend ?tile}
+      {:tiles/grid [{:tiles/row-one   ?tile-row}
+                    {:tiles/row-two   ?tile-row}
+                    {:tiles/row-three ?tile-row}
+                    {:tiles/row-four  ?tile-row}
+                    {:tiles/row-five  ?tile-row}
+                    {:tiles/row-six   ?tile-row}
+                    {:tiles/row-seven ?tile-row}]}])
 
   Object
   (render [this]
-    (let [{:keys [tiles/legend tiles/selected tiles/grid]} (om/props this)]
-      (dom/div nil
-        (tile-component selected)
-        (legend-component {:tiles/legend legend})
-        (dom/div #js {:style #js {:display "flex" :flexDirection "column"}}
-          (tiles-row (:tiles/row-one grid))
-          (tiles-row (:tiles/row-two grid))
-          (tiles-row (:tiles/row-three grid))
-          (tiles-row (:tiles/row-four grid))
-          (tiles-row (:tiles/row-five grid))
-          (tiles-row (:tiles/row-six grid))
-          (tiles-row (:tiles/row-seven grid)))))))
+    (let [{:keys [tiles/legend tiles/grid]} (om/props this)]
+      (dom/div #js {:style #js {:display "flex" :flexDirection "column" :alignItems "center" :marginTop 25}}
+               (logo)
+               (dom/div #js {:style #js {:display "flex" :flexDirection "column"}}
+                        (tiles-row (:tiles/row-one grid))
+                        (tiles-row (:tiles/row-two grid))
+                        (tiles-row (:tiles/row-three grid))
+                        (tiles-row (:tiles/row-four grid))
+                        (tiles-row (:tiles/row-five grid))
+                        (tiles-row (:tiles/row-six grid))
+                        (tiles-row (:tiles/row-seven grid)))
+               (legend-component {:tiles/legend legend})))))
 
 (defn make-tile [{:keys [background-color color]}]
-  {:width 10
-   :height 17
+  {:width 19
+   :height 30
    :backgroundColor background-color
-   :dot {:top 12 :left 4
-         :width 2 :borderRadius 1
-         :height 2 :backgroundColor color}})
+   :dot {:top 18 :left 8
+         :width 3 :borderRadius 2
+         :height 3 :backgroundColor color}})
 
-(def colors [{:background-color "#444" :color "white"}
-             {:background-color "blue" :color "white"}
-             {:background-color "cyan" :color "blue"}
-             {:background-color "red" :color "white"}
-             {:background-color "pink" :color "white"}
-             {:background-color "yellow" :color "red"}
+(def colors [{:background-color "#444"    :color "white"}
+             {:background-color "blue"    :color "white"}
+             {:background-color "cyan"    :color "blue"}
+             {:background-color "red"     :color "white"}
+             {:background-color "pink"    :color "white"}
+             {:background-color "yellow"  :color "red"}
              {:background-color "#64c7cc" :color "cyan"}
              {:background-color "#00a64d" :color "#75f0c3"}
              {:background-color "#f5008b" :color "#ffdbbf"}
@@ -126,7 +129,7 @@
              {:background-color "#fcf000" :color "#d60000"}
              {:background-color "#010103" :color "#fa8e66"}
              {:background-color "#7a2c02" :color "#fff3e6"}
-             {:background-color "white" :color "red"}
+             {:background-color "white"   :color "red"}
              {:background-color "#f5989c" :color "#963e03"}
              {:background-color "#ed1c23" :color "#fff780"}
              {:background-color "#f7f7f7" :color "#009e4c"}
@@ -165,14 +168,14 @@
   {:action (swap! state assoc :tiles/selected tile-ref)})
 
 (defmethod mutate 'row/select-tile
-  [{:keys [state ref]} _ _]
+  [{:keys [state ref]} _ {:keys [index]}]
   (let [st @state
         selected-tile (get st :tiles/selected)]
-    {:action #(swap! state assoc-in (conj ref :tiles 0) selected-tile)}))
+    {:action #(swap! state assoc-in (conj ref :tiles index) selected-tile)}))
 
 (def parser (om/parser {:read read :mutate mutate}))
 
-(def reconciler (om/reconciler {:state initial-state
+(defonce reconciler (om/reconciler {:state initial-state
                                 :parser parser}))
 
 (om/add-root! reconciler TilesApp (gdom/getElement "app"))
