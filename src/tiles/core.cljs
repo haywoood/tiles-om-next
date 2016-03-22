@@ -26,7 +26,7 @@
       (dom/div #js{:style #js{:position "relative" :width (:width p)
                               :height (:height p)
                               :backgroundColor (:backgroundColor p)}
-                   :onClick #(om/transact! this `[(~clickAction) :tiles/selected])}
+                   :onClick #(clickAction this)}
                (let [{:keys [width height backgroundColor top left borderRadius]} (:dot p)]
                  (dom/div #js {:style #js {:position "absolute" :width width
                                            :height height :top top :left left
@@ -37,16 +37,24 @@
 
 (defui Legend
   Object
+  (handle-click [_ x]
+    (om/transact! x `[(legend/select-tile {:tile-ref ~(om/get-ident x)}) :tiles/selected]))
+
   (render [this]
     (let [{:keys [tiles/legend]} (om/props this)]
       (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap"
                                       :width 75}}
-             (map #(tile-component (om/computed % {:clickAction 'legend/select-tile}))
+             (map #(tile-component (om/computed % {:clickAction (fn [x]
+                                                                  (.handle-click this x))}))
                   legend)))))
 
 (def legend-component (om/factory Legend))
 
 (defui TilesRow
+  static om/ITxIntercept
+  (tx-intercept [this tx]
+    (let [row-ref (om/get-ident this)]
+      (conj tx row-ref)))
   static om/Ident
   (ident [this {:keys [id]}]
     [:row/by-id id])
@@ -54,10 +62,15 @@
   (query [this]
     [:id {:tiles (om/get-query Tile)}])
   Object
+  (handle-click [this x]
+    (let [tile-ref (om/get-ident x)
+          row-ref (om/get-ident this)]
+      (om/transact! this `[(row/select-tile) ~row-ref])))
   (render [this]
-    (let [{:keys [id tiles]} (om/props this)]
+    (let [{:keys [tiles]} (om/props this)]
       (apply dom/div #js {:style #js {:display "flex"}}
-        (mapv #(tile-component (om/computed % {:clickAction 'row/select-tile})) tiles)))))
+        (mapv #(tile-component (om/computed % {:clickAction (fn [x] (.handle-click this x))}))
+              tiles)))))
 
 (def tiles-row (om/factory TilesRow {:key-fn :id}))
 
@@ -100,8 +113,7 @@
          :width 2 :borderRadius 1
          :height 2 :backgroundColor color}})
 
-(def colors [
-             {:background-color "#444" :color "white"}
+(def colors [{:background-color "#444" :color "white"}
              {:background-color "blue" :color "white"}
              {:background-color "cyan" :color "blue"}
              {:background-color "red" :color "white"}
@@ -149,12 +161,14 @@
 (defmulti mutate om/dispatch)
 
 (defmethod mutate 'legend/select-tile
-  [{:keys [state ref]} _ _]
-  {:action (swap! state assoc :tiles/selected ref)})
+  [{:keys [state]} _ {:keys [tile-ref]}]
+  {:action (swap! state assoc :tiles/selected tile-ref)})
 
 (defmethod mutate 'row/select-tile
   [{:keys [state ref]} _ _]
-  {:action #()})
+  (let [st @state
+        selected-tile (get st :tiles/selected)]
+    {:action #(swap! state assoc-in (conj ref :tiles 0) selected-tile)}))
 
 (def parser (om/parser {:read read :mutate mutate}))
 
