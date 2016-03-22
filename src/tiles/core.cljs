@@ -12,9 +12,9 @@
     (str tile-color "/" dot-color)))
 
 (defn logo []
-  (dom/div #js {:style #js {:position "absolute" :bottom 25 :left "48%" :fontSize 16 :letterSpacing 1.5
-                            :fontFamily "sans-serif" :color "blak"}}
-           "tiles"))
+  (dom/div #js {:style #js {:position "absolute" :bottom 25 :left "48%" :fontSize 18 :letterSpacing 1.5
+                            :fontFamily "georgia" :color "#444" :fontStyle "italic"}}
+           "tile"))
 
 (defui Tile
   static om/Ident
@@ -47,7 +47,7 @@
 
   (render [this]
     (let [{:keys [tiles/legend]} (om/props this)]
-      (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap" :width 180 :marginTop 35 :marginLeft 10}}
+      (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap" :width 180 :marginTop 35 :marginLeft 13}}
              (map #(tile-component (om/computed % {:clickAction (fn [x]
                                                                   (.handle-click this x))}))
                   legend)))))
@@ -144,7 +144,7 @@
    :tiles (into [] (repeat 9 blank-tile))})
 
 (def initial-state
-  {:tiles/legend (conj legend blank-tile)
+  {:tiles/legend legend
    :tiles/grid {:tiles/row-one   (blank-row)
                 :tiles/row-two   (blank-row)
                 :tiles/row-three (blank-row)
