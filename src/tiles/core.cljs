@@ -1,6 +1,7 @@
 (ns tiles.core
   (:require [goog.dom :as gdom]
             [om.next :as om :refer-macros [defui]]
+            [cljs.pprint :as pp]
             [om.dom :as dom]))
 
 (enable-console-print!)
@@ -17,14 +18,20 @@
   static om/IQuery
   (query [this]
     [:width :height :backgroundColor
-     {:dot [:width :height :backgroundColor]}])
+     {:dot [:top :left :width :height :backgroundColor :borderRadius]}])
   Object
   (render [this]
     (let [p (om/props this)
           clickAction (om/get-computed this :clickAction)]
-      (dom/div #js{:style #js{:width (:width p) :height (:height p)
+      (dom/div #js{:style #js{:position "relative" :width (:width p)
+                              :height (:height p)
                               :backgroundColor (:backgroundColor p)}
-                   :onClick #(om/transact! this `[(~clickAction) :tiles/selected])}))))
+                   :onClick #(om/transact! this `[(~clickAction) :tiles/selected])}
+               (let [{:keys [width height backgroundColor top left borderRadius]} (:dot p)]
+                 (dom/div #js {:style #js {:position "absolute" :width width
+                                           :height height :top top :left left
+                                           :borderRadius borderRadius
+                                           :backgroundColor backgroundColor}}))))))
 
 (def tile-component (om/factory Tile {:key-fn make-tile-ref-str}))
 
@@ -45,11 +52,12 @@
     [:row/by-id id])
   static om/IQuery
   (query [this]
-    [:id {:tile (om/get-query Tile)}])
+    [:id {:tiles (om/get-query Tile)}])
   Object
   (render [this]
-    (let [{:keys [id tile]} (om/props this)]
-      (tile-component tile))))
+    (let [{:keys [id tiles]} (om/props this)]
+      (apply dom/div #js {:style #js {:display "flex"}}
+        (mapv #(tile-component (om/computed % {:clickAction 'row/select-tile})) tiles)))))
 
 (def tiles-row (om/factory TilesRow {:key-fn :id}))
 
@@ -60,7 +68,13 @@
   static om/IQuery
   (query [this]
     `[{:tiles/selected ~(om/get-query Tile)}
-      {:tiles/grid [{:tiles/row-one ~(om/get-query TilesRow)}]}
+      {:tiles/grid [{:tiles/row-one ~(om/get-query TilesRow)}
+                    {:tiles/row-two ~(om/get-query TilesRow)}
+                    {:tiles/row-three ~(om/get-query TilesRow)}
+                    {:tiles/row-four ~(om/get-query TilesRow)}
+                    {:tiles/row-five ~(om/get-query TilesRow)}
+                    {:tiles/row-six ~(om/get-query TilesRow)}
+                    {:tiles/row-seven ~(om/get-query TilesRow)}]}
       {:tiles/legend ~(om/get-query Tile)}])
 
   Object
@@ -69,17 +83,22 @@
       (dom/div nil
         (tile-component selected)
         (legend-component {:tiles/legend legend})
-        (mapv tiles-row (:tiles/row-one grid))))))
+        (dom/div #js {:style #js {:display "flex" :flexDirection "column"}}
+          (tiles-row (:tiles/row-one grid))
+          (tiles-row (:tiles/row-two grid))
+          (tiles-row (:tiles/row-three grid))
+          (tiles-row (:tiles/row-four grid))
+          (tiles-row (:tiles/row-five grid))
+          (tiles-row (:tiles/row-six grid))
+          (tiles-row (:tiles/row-seven grid)))))))
 
-(defn make-tile [{:keys [background-color color] :as params}]
+(defn make-tile [{:keys [background-color color]}]
   {:width 10
    :height 17
    :backgroundColor background-color
-   :dot {:top 12
-         :left 4
-         :width 2
-         :height 2
-         :backgroundColor color}})
+   :dot {:top 12 :left 4
+         :width 2 :borderRadius 1
+         :height 2 :backgroundColor color}})
 
 (def colors [
              {:background-color "#444" :color "white"}
@@ -105,14 +124,19 @@
 
 (def blank-tile (make-tile {:color "red" :background-color "white"}))
 
+(defn blank-row []
+  {:id (.-uuid (.-id (om/tempid)))
+   :tiles (into [] (repeat 9 blank-tile))})
+
 (def initial-state
-  {:tiles/legend   (conj legend blank-tile)
-   :tiles/grid     {:tiles/row-one [{:id 0 :tile blank-tile}
-                                    {:id 1 :tile blank-tile}
-                                    {:id 2 :tile blank-tile}
-                                    {:id 3 :tile blank-tile}
-                                    {:id 4 :tile blank-tile}
-                                    {:id 5 :tile blank-tile}]}
+  {:tiles/legend (conj legend blank-tile)
+   :tiles/grid {:tiles/row-one   (blank-row)
+                :tiles/row-two   (blank-row)
+                :tiles/row-three (blank-row)
+                :tiles/row-four  (blank-row)
+                :tiles/row-five  (blank-row)
+                :tiles/row-six   (blank-row)
+                :tiles/row-seven (blank-row)}
    :tiles/selected nil})
 
 (defmulti read om/dispatch)
@@ -127,6 +151,10 @@
 (defmethod mutate 'legend/select-tile
   [{:keys [state ref]} _ _]
   {:action (swap! state assoc :tiles/selected ref)})
+
+(defmethod mutate 'row/select-tile
+  [{:keys [state ref]} _ _]
+  {:action #()})
 
 (def parser (om/parser {:read read :mutate mutate}))
 
