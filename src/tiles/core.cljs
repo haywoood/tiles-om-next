@@ -55,10 +55,6 @@
 (def legend-component (om/factory Legend))
 
 (defui TilesRow
-  static om/ITxIntercept
-  (tx-intercept [this tx]
-    (let [row-ref (om/get-ident this)]
-      (conj tx row-ref)))
   static om/Ident
   (ident [this {:keys [id]}]
     [:row/by-id id])
