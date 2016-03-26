@@ -12,9 +12,13 @@
     (str tile-color "/" dot-color)))
 
 (defn logo []
-  (dom/div #js {:style #js {:position "absolute" :bottom 25 :left "48%" :fontSize 18 :letterSpacing 1.5
-                            :fontFamily "georgia" :color "#444" :fontStyle "italic"}}
-           "tile"))
+  (dom/div nil
+           (dom/div #js {:style #js {:position   "absolute" :bottom 25 :left "48%" :fontSize 18 :letterSpacing 1.5
+                             :fontFamily "georgia" :color "#444" :fontStyle "italic"}}
+            "tile")
+           (dom/div #js {:style #js {:position   "absolute" :bottom 10 :left "48.8%" :fontSize 18 :letterSpacing 1.5
+                                     :fontFamily "georgia" :color "#444" :fontStyle "italic"}}
+                    "~")))
 
 (defui Tile
   static om/Ident
@@ -31,7 +35,7 @@
       (dom/div #js{:style #js{:position "relative" :width (:width p)
                               :height (:height p)
                               :backgroundColor (:backgroundColor p)}
-                   :onClick #(clickAction this)}
+                   :onMouseMove #(clickAction this)}
                (let [{:keys [width height backgroundColor top left borderRadius]} (:dot p)]
                  (dom/div #js {:style #js {:position "absolute" :width width
                                            :height height :top top :left left
@@ -55,10 +59,6 @@
 (def legend-component (om/factory Legend))
 
 (defui TilesRow
-  static om/ITxIntercept
-  (tx-intercept [this tx]
-    (let [row-ref (om/get-ident this)]
-      (conj tx row-ref)))
   static om/Ident
   (ident [this {:keys [id]}]
     [:row/by-id id])
@@ -77,35 +77,42 @@
 
 (def tiles-row (om/factory TilesRow {:key-fn :id}))
 
+(defui Grid
+  static om/Ident
+  (ident [this {:keys [id]}]
+    [:grid/by-id id])
+  static om/IQueryParams
+  (params [this]
+    {:tile-row (om/get-query TilesRow)})
+  static om/IQuery
+  (query [this]
+    '[:id {:rows ?tile-row}])
+  Object
+  (render [this]
+    (let [{:keys [rows]} (om/props this)]
+      (apply dom/div #js {:style #js {:display "flex" :flexDirection "column"}}
+        (mapv tiles-row rows)))))
+
+(def grid-component (om/factory Grid {:key-fn :id}))
+
 (defui TilesApp
   static om/IQueryParams
   (params [_]
     {:tile (om/get-query Tile)
-     :tile-row (om/get-query TilesRow)})
+     :grid (om/get-query Grid)})
   static om/IQuery
   (query [_]
     '[{:tiles/legend ?tile}
-      {:tiles/grid [{:tiles/row-one   ?tile-row}
-                    {:tiles/row-two   ?tile-row}
-                    {:tiles/row-three ?tile-row}
-                    {:tiles/row-four  ?tile-row}
-                    {:tiles/row-five  ?tile-row}
-                    {:tiles/row-six   ?tile-row}
-                    {:tiles/row-seven ?tile-row}]}])
+      {:tiles/grids ?grid}])
 
   Object
   (render [this]
-    (let [{:keys [tiles/legend tiles/grid]} (om/props this)]
+    (let [{:keys [tiles/legend tiles/grids]} (om/props this)]
+      (println (pp/pprint grids))
       (dom/div #js {:style #js {:display "flex" :flexDirection "column" :alignItems "center" :marginTop 25}}
                (logo)
-               (dom/div #js {:style #js {:display "flex" :flexDirection "column"}}
-                        (tiles-row (:tiles/row-one grid))
-                        (tiles-row (:tiles/row-two grid))
-                        (tiles-row (:tiles/row-three grid))
-                        (tiles-row (:tiles/row-four grid))
-                        (tiles-row (:tiles/row-five grid))
-                        (tiles-row (:tiles/row-six grid))
-                        (tiles-row (:tiles/row-seven grid)))
+               (apply dom/div #js {:style #js {:display "flex"}}
+                 (map grid-component grids))
                (legend-component {:tiles/legend legend})))))
 
 (defn make-tile [{:keys [background-color color]}]
@@ -144,14 +151,10 @@
    :tiles (into [] (repeat 9 blank-tile))})
 
 (def initial-state
-  {:tiles/legend legend
-   :tiles/grid {:tiles/row-one   (blank-row)
-                :tiles/row-two   (blank-row)
-                :tiles/row-three (blank-row)
-                :tiles/row-four  (blank-row)
-                :tiles/row-five  (blank-row)
-                :tiles/row-six   (blank-row)
-                :tiles/row-seven (blank-row)}
+  {:tiles/legend   legend
+   :tiles/grids    [{:id 1 :rows (into [] (repeat 7 (blank-row)))}
+                    {:id 2 :rows (into [] (repeat 7 (blank-row)))}
+                    {:id 3 :rows (into [] (repeat 7 (blank-row)))}]
    :tiles/selected nil})
 
 (defmulti read om/dispatch)
@@ -175,7 +178,7 @@
 
 (def parser (om/parser {:read read :mutate mutate}))
 
-(defonce reconciler (om/reconciler {:state initial-state
+(def reconciler (om/reconciler {:state initial-state
                                 :parser parser}))
 
 (om/add-root! reconciler TilesApp (gdom/getElement "app"))
