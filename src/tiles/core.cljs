@@ -68,7 +68,7 @@
   Object
   (handle-click [this index]
     (let [row-ref (om/get-ident this)]
-      (om/transact! this `[(row/select-tile {:index ~index}) ~row-ref])))
+      (om/transact! this `[(row/select-tile {:index ~index})])))
   (render [this]
     (let [{:keys [tiles]} (om/props this)]
       (apply dom/div #js {:style #js {:display "flex"}}
@@ -90,7 +90,8 @@
   Object
   (render [this]
     (let [{:keys [rows]} (om/props this)]
-      (apply dom/div #js {:style #js {:display "flex" :flexDirection "column"}}
+      (apply dom/div #js {:style #js {:display "flex"
+                                      :flexDirection "column"}}
         (mapv tiles-row rows)))))
 
 (def grid-component (om/factory Grid {:key-fn :id}))
@@ -111,7 +112,7 @@
       (println (pp/pprint grids))
       (dom/div #js {:style #js {:display "flex" :flexDirection "column" :alignItems "center" :marginTop 25}}
                (logo)
-               (apply dom/div #js {:style #js {:display "flex"}}
+               (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap" :width 342}}
                  (map grid-component grids))
                (legend-component {:tiles/legend legend})))))
 
@@ -150,12 +151,14 @@
   {:id (.-uuid (.-id (om/tempid)))
    :tiles (into [] (repeat 9 blank-tile))})
 
+(defn blank-grid []
+  {:id (.-uuid (.-id (om/tempid)))
+   :rows (mapv blank-row (range 7))})
+
 (def initial-state
   {:tiles/legend   legend
-   :tiles/grids    [{:id 1 :rows (into [] (repeat 7 (blank-row)))}
-                    {:id 2 :rows (into [] (repeat 7 (blank-row)))}
-                    {:id 3 :rows (into [] (repeat 7 (blank-row)))}]
-   :tiles/selected nil})
+   :tiles/grids    (mapv blank-grid (range 4))
+   :tiles/selected (last legend)})
 
 (defmulti read om/dispatch)
 
