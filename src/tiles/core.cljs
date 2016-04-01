@@ -185,20 +185,22 @@
   [{:keys [state]} _ {:keys [tile-ref]}]
   {:action #(swap! state assoc :tiles/selected tile-ref)})
 
+(defn select-tile [state ref index selected-tile]
+  (fn []
+    (swap! state assoc-in (conj ref :tiles index) selected-tile)))
+
 (defmethod mutate 'row/select-tile
   [{:keys [state ref]} _ {:keys [index]}]
   (let [st @state
         selected-tile (get st :tiles/selected)]
-    {:action #(swap! state assoc-in (conj ref :tiles index) selected-tile)}))
+    {:action (select-tile state ref index selected-tile)}))
 
 (defmethod mutate 'row/hover-tile
   [{:keys [state ref]} _ {:keys [index]}]
   (let [st @state
         selected-tile (get st :tiles/selected)]
     (if (get st :grid/dragging)
-      {:action #(swap! state (fn [state]
-                               (-> state
-                                   (assoc-in (conj ref :tiles index) selected-tile))))})))
+      {:action (select-tile state ref index selected-tile)})))
 
 (def parser (om/parser {:read read :mutate mutate}))
 
