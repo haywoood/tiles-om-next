@@ -6,6 +6,9 @@
 
 (enable-console-print!)
 
+(declare reconciler)
+(declare blank-grid)
+
 (defn make-tile-ref-str [props]
   (let [tile-color (:backgroundColor props)
         dot-color (get-in props [:dot :backgroundColor])]
@@ -31,11 +34,15 @@
   Object
   (render [this]
     (let [p (om/props this)
-          clickAction (om/get-computed this :clickAction)]
-      (dom/div #js{:style #js{:position "relative" :width (:width p)
-                              :height (:height p)
-                              :backgroundColor (:backgroundColor p)}
-                   :onMouseMove #(clickAction this)}
+          clickAction (om/get-computed this :clickAction)
+          hoverAction (om/get-computed this :hoverAction)]
+      (dom/div #js{:style       #js{:position        "relative" :width (:width p)
+                                    :height          (:height p)
+                                    :backgroundColor (:backgroundColor p)}
+                   :onMouseOver #(hoverAction this)
+                   :onMouseDown #(do
+                                   (swap! (om/app-state reconciler) assoc :grid/dragging true)
+                                   (clickAction this))}
                (let [{:keys [width height backgroundColor top left borderRadius]} (:dot p)]
                  (dom/div #js {:style #js {:position "absolute" :width width
                                            :height height :top top :left left
@@ -67,12 +74,14 @@
     [:id {:tiles (om/get-query Tile)}])
   Object
   (handle-click [this index]
-    (let [row-ref (om/get-ident this)]
-      (om/transact! this `[(row/select-tile {:index ~index})])))
+    (om/transact! this `[(row/select-tile {:index ~index})]))
+  (handle-hover [this index]
+    (om/transact! this `[(row/hover-tile {:index ~index})]))
   (render [this]
     (let [{:keys [tiles]} (om/props this)]
       (apply dom/div #js {:style #js {:display "flex"}}
-        (mapv (fn [tile n] (tile-component (om/computed tile {:clickAction #(.handle-click this n)})))
+        (mapv (fn [tile n] (tile-component (om/computed tile {:clickAction #(.handle-click this n)
+                                                              :hoverAction #(.handle-hover this n)})))
               tiles (range))))))
 
 (def tiles-row (om/factory TilesRow {:key-fn :id}))
@@ -109,9 +118,11 @@
   Object
   (render [this]
     (let [{:keys [tiles/legend tiles/grids]} (om/props this)]
-      (println (pp/pprint grids))
-      (dom/div #js {:style #js {:display "flex" :flexDirection "column" :alignItems "center" :marginTop 25}}
+      (dom/div #js {:style #js {:display "flex" :flexDirection "column" :alignItems "center" :marginTop 25}
+                    :onMouseUp #(swap! (om/app-state reconciler) assoc :grid/dragging false)}
                (logo)
+               (dom/div #js {:onClick #(swap! (om/app-state reconciler) assoc :tiles/grids (mapv blank-grid (range 4)))}
+                        "")
                (apply dom/div #js {:style #js {:display "flex" :flexWrap "wrap" :width 342}}
                  (map grid-component grids))
                (legend-component {:tiles/legend legend})))))
@@ -158,7 +169,8 @@
 (def initial-state
   {:tiles/legend   legend
    :tiles/grids    (mapv blank-grid (range 4))
-   :tiles/selected (last legend)})
+   :tiles/selected (->> legend last make-tile-ref-str (conj [:tile/by-colors]))
+   :grid/dragging  false})
 
 (defmulti read om/dispatch)
 
@@ -171,13 +183,22 @@
 
 (defmethod mutate 'legend/select-tile
   [{:keys [state]} _ {:keys [tile-ref]}]
-  {:action (swap! state assoc :tiles/selected tile-ref)})
+  {:action #(swap! state assoc :tiles/selected tile-ref)})
 
 (defmethod mutate 'row/select-tile
   [{:keys [state ref]} _ {:keys [index]}]
   (let [st @state
         selected-tile (get st :tiles/selected)]
     {:action #(swap! state assoc-in (conj ref :tiles index) selected-tile)}))
+
+(defmethod mutate 'row/hover-tile
+  [{:keys [state ref]} _ {:keys [index]}]
+  (let [st @state
+        selected-tile (get st :tiles/selected)]
+    (if (get st :grid/dragging)
+      {:action #(swap! state (fn [state]
+                               (-> state
+                                   (assoc-in (conj ref :tiles index) selected-tile))))})))
 
 (def parser (om/parser {:read read :mutate mutate}))
 
