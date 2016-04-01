@@ -41,6 +41,7 @@
                                     :backgroundColor (:backgroundColor p)}
                    :onMouseOver #(hoverAction this)
                    :onMouseDown #(do
+                                   (.preventDefault %)
                                    (swap! (om/app-state reconciler) assoc :grid/dragging true)
                                    (clickAction this))}
                (let [{:keys [width height backgroundColor top left borderRadius]} (:dot p)]
